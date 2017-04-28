@@ -291,30 +291,39 @@ int main(int argc, char* argv[])
 
 	int lastTime = SDL_GetTicks();
 	bool running = true;
-
+	
+	// Smog, named after the Flux of The Shadows from Galactic Football, 
+	// switches loop between Polling and Waiting.
+	Uint8 smog = 0;
+	
 	while(running)
 	{
 		SDL_Event event;
-		while(SDL_PollEvent(&event))
+		if(++smog < 100 ? SDL_PollEvent(&event) : SDL_WaitEvent(&event))
 		{
-			switch(event.type)
+			smog = 0;
+			do
 			{
-				case SDL_JOYHATMOTION:
-				case SDL_JOYBUTTONDOWN:
-				case SDL_JOYBUTTONUP:
-				case SDL_KEYDOWN:
-				case SDL_KEYUP:
-				case SDL_JOYAXISMOTION:
-				case SDL_TEXTINPUT:
-				case SDL_TEXTEDITING:
-				case SDL_JOYDEVICEADDED:
-				case SDL_JOYDEVICEREMOVED:
-					InputManager::getInstance()->parseEvent(event, &window);
-					break;
-				case SDL_QUIT:
-					running = false;
-					break;
-			}
+				switch(event.type)
+				{
+					case SDL_JOYHATMOTION:
+					case SDL_JOYBUTTONDOWN:
+					case SDL_JOYBUTTONUP:
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+					case SDL_JOYAXISMOTION:
+					case SDL_TEXTINPUT:
+					case SDL_TEXTEDITING:
+					case SDL_JOYDEVICEADDED:
+					case SDL_JOYDEVICEREMOVED:
+						InputManager::getInstance()->parseEvent(event, &window);
+						break;
+					case SDL_QUIT:
+						running = false;
+						break;
+				}
+			} while (SDL_PollEvent(&event));
+			lastTime = SDL_GetTicks();
 		}
 
 		if(window.isSleeping())
