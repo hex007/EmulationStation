@@ -215,8 +215,8 @@ void SystemView::onCursorChanged(const CursorState& state)
 			mSystemInfo.setOpacity((unsigned char)(lerp<float>(0.f, 1.f, t) * 255));
 		}, 300);
 
-		// wait 600ms to fade in
-		setAnimation(infoFadeIn, 2000, nullptr, false, 2);
+		// wait 150ms to fade in
+		setAnimation(infoFadeIn, 500, nullptr, false, 2);
 	}
 
 	// no need to animate transition, we're not going anywhere (probably mEntries.size() == 1)
@@ -250,7 +250,7 @@ void SystemView::onCursorChanged(const CursorState& state)
 			if(t > 0.5f)
 				this->mExtrasCamOffset = endPos;
 
-		}, 500);
+		}, 300);
 	}
 	else{ // slide
 		anim = new LambdaAnimation(
@@ -265,7 +265,7 @@ void SystemView::onCursorChanged(const CursorState& state)
 
 			this->mCamOffset = f;
 			this->mExtrasCamOffset = f;
-		}, 500);
+		}, 300);
 	}
 
 	setAnimation(anim, 0, nullptr, false, 0);
