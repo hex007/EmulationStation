@@ -9,6 +9,13 @@ EmulationStation Optimized for GameBoyZero builds
 This is a fork of EmulationStation for RetroPie.
 EmulationStation is a cross-platform graphical front-end for emulators with controller navigation.
 
+Getting Source
+==============
+Get the sources for the build:
+```bash
+git clone --depth 1 --recurse-submodules https://github.com/hex007/EmulationStation
+```
+
 Building
 ========
 
