@@ -1,5 +1,10 @@
-EmulationStation
-================
+EmulationStation Optimized for GameBoyZero builds 
+=================================================
+
+**Build goals**
+- Optimize performance for battery savings
+- Reduce cpu usage while staying responsive
+- Do not care about resource intensive beautifications
 
 This is a fork of EmulationStation for RetroPie.
 EmulationStation is a cross-platform graphical front-end for emulators with controller navigation.
