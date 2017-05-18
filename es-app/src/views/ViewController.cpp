@@ -125,24 +125,24 @@ void ViewController::goToRandomGame()
 	for(auto it = SystemData::sSystemVector.begin(); it != SystemData::sSystemVector.end(); it++)
 	{
 		if ((*it)->getName() != "retropie")
-			total += (*it)->getGameCount();
+			total += (*it)->getDisplayedGameCount();
 	}
-	
+
 	// get random number in range
 	int target = std::round(((double)std::rand() / (double)RAND_MAX) * total);
-	
+
 	for (auto it = SystemData::sSystemVector.begin(); it != SystemData::sSystemVector.end(); it++)
 	{
 		if ((*it)->getName() != "retropie")
 		{
-			if ((target - (int)(*it)->getGameCount()) >= 0)
+			if ((target - (int)(*it)->getDisplayedGameCount()) >= 0)
 			{
-				target -= (int)(*it)->getGameCount();
+				target -= (int)(*it)->getDisplayedGameCount();
 			}
 			else
 			{
 				goToGameList(*it);
-				std::vector<FileData*> list = (*it)->getRootFolder()->getFilesRecursive(GAME);
+				std::vector<FileData*> list = (*it)->getRootFolder()->getFilesRecursive(GAME, true);
 				getGameListView(*it)->setCursor(list.at(target));
 				return;
 			}
@@ -153,7 +153,7 @@ void ViewController::goToRandomGame()
 void ViewController::playViewTransition()
 {
 	Eigen::Vector3f target(Eigen::Vector3f::Identity());
-	if(mCurrentView) 
+	if(mCurrentView)
 		target = mCurrentView->getPosition();
 
 	// no need to animate, we're not going anywhere (probably goToNextGamelist() or goToPrevGamelist() when there's only 1 system)
@@ -238,7 +238,7 @@ void ViewController::launch(FileData* game, Eigen::Vector3f center)
 		});
 	}else{
 		// move camera to zoom in on center + fade out, launch game, come back in
-		setAnimation(new LaunchAnimation(mCamera, mFadeOpacity, center, 1500), 0, [this, origCamera, center, game] 
+		setAnimation(new LaunchAnimation(mCamera, mFadeOpacity, center, 1500), 0, [this, origCamera, center, game]
 		{
 			game->getSystem()->launchGame(mWindow, game);
 			mCamera = origCamera;
@@ -262,33 +262,51 @@ std::shared_ptr<IGameListView> ViewController::getGameListView(SystemData* syste
 	bool themeHasVideoView = system->getTheme()->hasView("video");
 
 	//decide type
-	bool detailed = false;
-	bool video	  = false;
-	std::vector<FileData*> files = system->getRootFolder()->getFilesRecursive(GAME | FOLDER);
-	for(auto it = files.begin(); it != files.end(); it++)
+	GameListViewType selectedViewType = AUTOMATIC;
+
+	std::string viewPreference = Settings::getInstance()->getString("GamelistViewStyle");
+	if (viewPreference.compare("basic") == 0)
+		selectedViewType = BASIC;
+	if (viewPreference.compare("detailed") == 0)
+		selectedViewType = DETAILED;
+	if (viewPreference.compare("video") == 0)
+		selectedViewType = VIDEO;
+
+	if (selectedViewType == AUTOMATIC)
 	{
-		if(themeHasVideoView && !(*it)->getVideoPath().empty())
+		std::vector<FileData*> files = system->getRootFolder()->getFilesRecursive(GAME | FOLDER);
+		for (auto it = files.begin(); it != files.end(); it++)
 		{
-			video = true;
-			break;
-		}
-		else if(!(*it)->getThumbnailPath().empty())
-		{
-			detailed = true;
-			// Don't break out in case any subsequent files have video
+			if (themeHasVideoView && !(*it)->getVideoPath().empty())
+			{
+				selectedViewType = VIDEO;
+				break;
+			}
+			else if (!(*it)->getThumbnailPath().empty())
+			{
+				selectedViewType = DETAILED;
+				// Don't break out in case any subsequent files have video
+			}
 		}
 	}
-		
-	if (video)
-		// Create the view
-		view = std::shared_ptr<IGameListView>(new VideoGameListView(mWindow, system->getRootFolder()));
-	else if(detailed)
-		view = std::shared_ptr<IGameListView>(new DetailedGameListView(mWindow, system->getRootFolder()));
-	else
-		view = std::shared_ptr<IGameListView>(new BasicGameListView(mWindow, system->getRootFolder()));
-		
-	// uncomment for experimental "image grid" view
-	//view = std::shared_ptr<IGameListView>(new GridGameListView(mWindow, system->getRootFolder()));
+
+	// Create the view
+	switch (selectedViewType)
+	{
+		case VIDEO:
+			view = std::shared_ptr<IGameListView>(new VideoGameListView(mWindow, system->getRootFolder()));
+			break;
+		case DETAILED:
+			view = std::shared_ptr<IGameListView>(new DetailedGameListView(mWindow, system->getRootFolder()));
+			break;
+		// case GRID placeholder for future implementation.
+		//		view = std::shared_ptr<IGameListView>(new GridGameListView(mWindow, system->getRootFolder()));
+		//		break;
+		case BASIC:
+		default:
+			view = std::shared_ptr<IGameListView>(new BasicGameListView(mWindow, system->getRootFolder()));
+			break;
+	}
 
 	view->setTheme(system->getTheme());
 
@@ -354,7 +372,7 @@ void ViewController::render(const Eigen::Affine3f& parentTrans)
 
 	// draw systemview
 	getSystemListView()->render(trans);
-	
+
 	// draw gamelists
 	for(auto it = mGameListViews.begin(); it != mGameListViews.end(); it++)
 	{
@@ -401,7 +419,11 @@ void ViewController::reloadGameListView(IGameListView* view, bool reloadTheme)
 				system->loadTheme();
 
 			std::shared_ptr<IGameListView> newView = getGameListView(system);
-			newView->setCursor(cursor);
+
+			// to counter having come from a placeholder
+			if (!cursor->isPlaceHolder()) {
+				newView->setCursor(cursor);
+			}
 
 			if(isCurrent)
 				mCurrentView = newView;
@@ -455,7 +477,7 @@ std::vector<HelpPrompt> ViewController::getHelpPrompts()
 	std::vector<HelpPrompt> prompts;
 	if(!mCurrentView)
 		return prompts;
-	
+
 	prompts = mCurrentView->getHelpPrompts();
 	prompts.push_back(HelpPrompt("start", "menu"));
 

@@ -56,7 +56,7 @@ const std::map<PlatformId, const char*> gamesdb_platformid_map = boost::assign::
 	(PLAYSTATION_3, "Sony Playstation 3")
 	(PLAYSTATION_4, "Sony Playstation 4")
 	(PLAYSTATION_VITA, "Sony Playstation Vita")
-	(PLAYSTATION_PORTABLE, "Sony PSP")
+	(PLAYSTATION_PORTABLE, "Sony Playstation Portable")
 	(SUPER_NINTENDO, "Super Nintendo (SNES)")
 	(TURBOGRAFX_16, "TurboGrafx 16")
 	(WONDERSWAN, "WonderSwan")
@@ -70,10 +70,15 @@ void thegamesdb_generate_scraper_requests(const ScraperSearchParams& params, std
 	std::string path = "thegamesdb.net/api/GetGame.php?";
 
 	std::string cleanName = params.nameOverride;
-	if(cleanName.empty())
+	if (cleanName.empty())
+	{
 		cleanName = params.game->getCleanName();
-
-	path += "name=" + HttpReq::urlEncode(cleanName);
+		path += "name=" + HttpReq::urlEncode(cleanName);
+	}
+	else
+	{
+		path += "exactname=" + HttpReq::urlEncode(cleanName);
+	}
 
 	if(params.system->getPlatformIds().empty())
 	{

@@ -7,11 +7,12 @@
 #include "MetaData.h"
 #include "PlatformId.h"
 #include "ThemeData.h"
+#include "FileFilterIndex.h"
 
 class SystemData
 {
 public:
-	SystemData(const std::string& name, const std::string& fullName, const std::string& startPath, const std::vector<std::string>& extensions, 
+	SystemData(const std::string& name, const std::string& fullName, const std::string& startPath, const std::vector<std::string>& extensions,
 		const std::string& command, const std::vector<PlatformIds::PlatformId>& platformIds, const std::string& themeFolder);
 	~SystemData();
 
@@ -30,8 +31,9 @@ public:
 	std::string getGamelistPath(bool forWrite) const;
 	bool hasGamelist() const;
 	std::string getThemePath() const;
-	
+
 	unsigned int getGameCount() const;
+	unsigned int getDisplayedGameCount() const;
 
 	void launchGame(Window* window, FileData* game);
 
@@ -44,7 +46,7 @@ public:
 
 	inline std::vector<SystemData*>::const_iterator getIterator() const { return std::find(sSystemVector.begin(), sSystemVector.end(), this); };
 	inline std::vector<SystemData*>::const_reverse_iterator getRevIterator() const { return std::find(sSystemVector.rbegin(), sSystemVector.rend(), this); };
-	
+
 	inline SystemData* getNext() const
 	{
 		auto it = getIterator();
@@ -64,6 +66,8 @@ public:
 	// Load or re-load theme.
 	void loadTheme();
 
+	FileFilterIndex* getIndex() { return mFilterIndex; };
+
 private:
 	std::string mName;
 	std::string mFullName;
@@ -75,6 +79,8 @@ private:
 	std::shared_ptr<ThemeData> mTheme;
 
 	void populateFolder(FileData* folder);
+
+	FileFilterIndex* mFilterIndex;
 
 	FileData* mRootFolder;
 };
