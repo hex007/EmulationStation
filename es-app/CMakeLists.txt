@@ -1,6 +1,7 @@
 project("emulationstation")
 
 set(ES_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/AudioPlayer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/EmulationStation.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/FileData.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/FileSorts.h
@@ -49,6 +50,7 @@ set(ES_HEADERS
 )
 
 set(ES_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/AudioPlayer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/FileData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/FileSorts.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp

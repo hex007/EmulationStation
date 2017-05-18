@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <SDL_joystick.h>
 #include "Renderer.h"
+#include "AudioPlayer.h"
 #include "AudioManager.h"
 #include "VolumeControl.h"
 #include "Log.h"
@@ -111,6 +112,7 @@ void SystemData::launchGame(Window* window, FileData* game)
 {
 	LOG(LogInfo) << "Attempting to launch game...";
 
+	AudioPlayer::getInstance()->pause();
 	AudioManager::getInstance()->deinit();
 	VolumeControl::getInstance()->deinit();
 	window->deinit();
@@ -136,6 +138,7 @@ void SystemData::launchGame(Window* window, FileData* game)
 	window->init();
 	VolumeControl::getInstance()->init();
 	AudioManager::getInstance()->init();
+	AudioPlayer::getInstance()->conti();
 	window->normalizeNextUpdate();
 
 	//update number of times the game has been launched
