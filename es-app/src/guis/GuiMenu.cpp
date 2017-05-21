@@ -42,7 +42,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			row.input_handler = [&](InputConfig* config, Input input) {
 				if (config->isMappedTo("a", input) && input.value)
 				{
-					AudioPlayer::getInstance()->play(-2);
+					AudioPlayer::play(-2);
 					return true;
 				}
 				return false;
@@ -54,7 +54,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			row.input_handler = [&](InputConfig* config, Input input) {
 				if (config->isMappedTo("a", input) && input.value)
 				{
-					AudioPlayer::getInstance()->play(-1);
+					AudioPlayer::play(-1);
 					return true;
 				}
 				return false;
@@ -66,7 +66,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			row.input_handler = [&](InputConfig* config, Input input) {
 				if (config->isMappedTo("a", input) && input.value)
 				{
-					AudioPlayer::getInstance()->skip();
+					AudioPlayer::skip();
 					return true;
 				}
 				return false;
@@ -78,7 +78,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			row.input_handler = [&](InputConfig* config, Input input) {
 				if (config->isMappedTo("a", input) && input.value)
 				{
-					AudioPlayer::getInstance()->stop();;
+					AudioPlayer::stop();;
 					return true;
 				}
 				return false;
@@ -90,7 +90,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			row.input_handler = [&](InputConfig* config, Input input) {
 				if (config->isMappedTo("a", input) && input.value)
 				{
-					AudioPlayer::getInstance()->start();
+					AudioPlayer::start();
 					return true;
 				}
 				return false;
@@ -102,7 +102,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			row.input_handler = [&](InputConfig* config, Input input) {
 				if (config->isMappedTo("a", input) && input.value)
 				{
-					AudioPlayer::getInstance()->clear();
+					AudioPlayer::clear();
 					return true;
 				}
 				return false;

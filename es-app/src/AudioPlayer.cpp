@@ -1,30 +1,5 @@
 #include "AudioPlayer.h"
 
-std::weak_ptr<AudioPlayer> AudioPlayer::sInstance;
-
-AudioPlayer::AudioPlayer(const AudioPlayer & right)
-{
-	sInstance = right.sInstance;
-}
-
-AudioPlayer & AudioPlayer::operator=(const AudioPlayer & right)
-{
-	if (this != &right) {
-		sInstance = right.sInstance;
-	}
-	return *this;
-}
-
-std::shared_ptr<AudioPlayer> & AudioPlayer::getInstance()
-{
-	static std::shared_ptr<AudioPlayer> sharedInstance = sInstance.lock();
-	if (sharedInstance == nullptr) {
-		sharedInstance.reset(new AudioPlayer);
-		sInstance = sharedInstance;
-	}
-	return sharedInstance;
-}
-
 void AudioPlayer::play(int song){
 	switch (song){
 		case -2:

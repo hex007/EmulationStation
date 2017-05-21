@@ -112,7 +112,7 @@ void SystemData::launchGame(Window* window, FileData* game)
 {
 	LOG(LogInfo) << "Attempting to launch game...";
 
-	AudioPlayer::getInstance()->pause();
+	AudioPlayer::pause();
 	AudioManager::getInstance()->deinit();
 	VolumeControl::getInstance()->deinit();
 	window->deinit();
@@ -138,7 +138,7 @@ void SystemData::launchGame(Window* window, FileData* game)
 	window->init();
 	VolumeControl::getInstance()->init();
 	AudioManager::getInstance()->init();
-	AudioPlayer::getInstance()->conti();
+	AudioPlayer::conti();
 	window->normalizeNextUpdate();
 
 	//update number of times the game has been launched

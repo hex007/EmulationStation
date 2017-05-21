@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
 	window.pushGui(ViewController::get());
 
 	// Start Music shuffled
-	AudioPlayer::getInstance()->play(-2);
+	AudioPlayer::play(-2);
 
 	if(!scrape_cmdline)
 	{
@@ -359,8 +359,8 @@ int main(int argc, char* argv[])
 	SystemData::deleteSystems();
 
 	LOG(LogInfo) << "EmulationStation cleanly shutting down.";
-	AudioPlayer::getInstance()->clear();
-	AudioPlayer::getInstance()->stop();
+	AudioPlayer::clear();
+	AudioPlayer::stop();
 
 	return 0;
 }
