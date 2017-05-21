@@ -8,6 +8,8 @@
 #include "SystemData.h"
 #include "Settings.h"
 #include "Util.h"
+#include "guis/GuiMsgBox.h"
+#include "guis/GuiSettings.h"
 
 // buffer values for scrolling velocity (left, stopped, right)
 const int logoBuffersLeft[] = { -5, -2, -1 };
@@ -56,21 +58,21 @@ void SystemView::populate()
 			logoSelected->setPosition((mCarousel.logoSize.x() - logoSelected->getSize().x()) / 2,
 				(mCarousel.logoSize.y() - logoSelected->getSize().y()) / 2); // center
 			e.data.logoSelected = std::shared_ptr<GuiComponent>(logoSelected);
-			
+
 		}else{
 			// no logo in theme; use text
-			TextComponent* text = new TextComponent(mWindow, 
-				(*it)->getName(), 
-				Font::get(FONT_SIZE_LARGE), 
-				0x000000FF, 
+			TextComponent* text = new TextComponent(mWindow,
+				(*it)->getName(),
+				Font::get(FONT_SIZE_LARGE),
+				0x000000FF,
 				ALIGN_CENTER);
 			text->setSize(mCarousel.logoSize);
 			e.data.logo = std::shared_ptr<GuiComponent>(text);
 
-			TextComponent* textSelected = new TextComponent(mWindow, 
-				(*it)->getName(), 
+			TextComponent* textSelected = new TextComponent(mWindow,
+				(*it)->getName(),
 				Font::get((int)(FONT_SIZE_LARGE * 1.5)),
-				0x000000FF, 
+				0x000000FF,
 				ALIGN_CENTER);
 			textSelected->setSize(mCarousel.logoSize);
 			e.data.logoSelected = std::shared_ptr<GuiComponent>(textSelected);
@@ -152,10 +154,65 @@ bool SystemView::input(InputConfig* config, Input input)
 			ViewController::get()->goToRandomGame();
 			return true;
 		}
+		if(config->isMappedTo("select", input))
+		{
+			auto s = new GuiSettings(mWindow, "QUIT");
+			Window* window = mWindow;
+			ComponentListRow row;
+
+			row.makeAcceptInputHandler([window] {
+				window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
+				[] {
+					if(quitES("/tmp/es-restart") != 0)
+						LOG(LogWarning) << "Restart terminated with non-zero result!";
+				}, "NO", nullptr));
+			});
+			row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
+			s->addRow(row);
+
+			row.elements.clear();
+			row.makeAcceptInputHandler([window] {
+				window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
+				[] {
+					if(quitES("/tmp/es-sysrestart") != 0)
+						LOG(LogWarning) << "Restart terminated with non-zero result!";
+				}, "NO", nullptr));
+			});
+			row.addElement(std::make_shared<TextComponent>(window, "RESTART SYSTEM", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
+			s->addRow(row);
+
+			row.elements.clear();
+			row.makeAcceptInputHandler([window] {
+				window->pushGui(new GuiMsgBox(window, "REALLY SHUTDOWN?", "YES",
+				[] {
+					if(quitES("/tmp/es-shutdown") != 0)
+						LOG(LogWarning) << "Shutdown terminated with non-zero result!";
+				}, "NO", nullptr));
+			});
+			row.addElement(std::make_shared<TextComponent>(window, "SHUTDOWN SYSTEM", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
+			s->addRow(row);
+
+			if(Settings::getInstance()->getBool("ShowExit"))
+			{
+				row.elements.clear();
+				row.makeAcceptInputHandler([window] {
+					window->pushGui(new GuiMsgBox(window, "REALLY QUIT?", "YES",
+					[] {
+						SDL_Event ev;
+						ev.type = SDL_QUIT;
+						SDL_PushEvent(&ev);
+					}, "NO", nullptr));
+				});
+				row.addElement(std::make_shared<TextComponent>(window, "QUIT EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
+				s->addRow(row);
+			}
+			mWindow->pushGui(s);
+			return true;
+		}
 	}else{
-		if(config->isMappedTo("left", input) || 
+		if(config->isMappedTo("left", input) ||
 			config->isMappedTo("right", input) ||
-			config->isMappedTo("up", input) || 
+			config->isMappedTo("up", input) ||
 			config->isMappedTo("down", input))
 			listInput(0);
 	}
@@ -184,13 +241,13 @@ void SystemView::onCursorChanged(const CursorState& state)
 
 	float endPos = target; // directly
 	float dist = abs(endPos - startPos);
-	
+
 	if(abs(target + posMax - startPos) < dist)
 		endPos = target + posMax; // loop around the end (0 -> max)
 	if(abs(target - posMax - startPos) < dist)
 		endPos = target - posMax; // loop around the start (max - 1 -> -1)
 
-	
+
 	// animate mSystemInfo's opacity (fade out, wait, fade back in)
 
 	cancelAnimation(1);
@@ -209,14 +266,14 @@ void SystemView::onCursorChanged(const CursorState& state)
 	// also change the text after we've fully faded out
 	setAnimation(infoFadeOut, 0, [this, gameCount] {
 		std::stringstream ss;
-		
+
 		if (getSelected()->getName() == "retropie")
 			ss << "CONFIGURATION";
 		// only display a game count if there are at least 2 games
 		else if(gameCount > 1)
 			ss << gameCount << " GAMES AVAILABLE";
 
-		mSystemInfo.setText(ss.str()); 
+		mSystemInfo.setText(ss.str());
 	}, false, 1);
 
 	// only display a game count if there are at least 2 games
@@ -288,7 +345,7 @@ void SystemView::render(const Eigen::Affine3f& parentTrans)
 {
 	if(size() == 0)
 		return;  // nothing to render
-	
+
 	Eigen::Affine3f trans = getTransform() * parentTrans;
 
 	auto systemInfoZIndex = mSystemInfo.getZIndex();
@@ -397,9 +454,9 @@ void SystemView::renderCarousel(const Eigen::Affine3f& trans)
 	int center = (int)(mCamOffset);
 	int logoCount = std::min(mCarousel.maxLogoCount, (int)mEntries.size());
 
-	// Adding texture loading buffers depending on scrolling speed and status	
-	int bufferIndex = getScrollingVelocity() + 1;	
-	
+	// Adding texture loading buffers depending on scrolling speed and status
+	int bufferIndex = getScrollingVelocity() + 1;
+
 	for (int i = center - logoCount / 2 + logoBuffersLeft[bufferIndex]; i <= center + logoCount / 2 + logoBuffersRight[bufferIndex]; i++)
 	{
 		int index = i;
@@ -435,7 +492,7 @@ void SystemView::renderInfoBar(const Eigen::Affine3f& trans)
 void SystemView::renderExtras(const Eigen::Affine3f& trans, float lower, float upper)
 {
 	int extrasCenter = (int)mExtrasCamOffset;
-	
+
 	// Adding texture loading buffers depending on scrolling speed and status
 	int bufferIndex = getScrollingVelocity() + 1;
 
