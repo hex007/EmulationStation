@@ -1,10 +1,23 @@
-EmulationStation Optimized for GameBoyZero builds 
+EmulationStation Optimized for Raspberry Pi 1/Zero builds
 =================================================
 
 **Build goals**
 - Optimize performance for battery savings
 - Reduce cpu usage while staying responsive
 - Do not care about resource intensive beautifications
+- Media player testing
+
+**For Media Player**
+If you want to use the Media Backend:
+- Copy files in "audio-server" folder to "/home/pi/audio-server/"
+- Create directory for Music : "/home/pi/Music/"
+- Copy all music to this directory
+- Install libav-tools: "sudo apt-get install libav-tools"
+- Add to startup script (/etc/rc.local), before the "return 0" these lines without quotes
+```
+pgrep omxplayer && kill `pgrep omxplayer`
+python /home/pi/audio-server/main.py > /dev/null 2>&1 &
+```
 
 This is a fork of EmulationStation for RetroPie.
 EmulationStation is a cross-platform graphical front-end for emulators with controller navigation.
