@@ -78,20 +78,24 @@ public:
 	std::shared_ptr<IGameListView> getGameListView(SystemData* system);
 	std::shared_ptr<SystemView> getSystemListView();
 
+	bool getVideoEnabled() { return mVideoEnabled; }
+	void setVideoEnabled(bool state) { mVideoEnabled = state; }
+
 private:
 	ViewController(Window* window);
 	static ViewController* sInstance;
 
 	void playViewTransition();
 	int getSystemId(SystemData* system);
-	
+
 	std::shared_ptr<GuiComponent> mCurrentView;
 	std::map< SystemData*, std::shared_ptr<IGameListView> > mGameListViews;
 	std::shared_ptr<SystemView> mSystemListView;
-	
+
 	Eigen::Affine3f mCamera;
 	float mFadeOpacity;
 	bool mLockInput;
+	bool mVideoEnabled;
 
 	State mState;
 };
