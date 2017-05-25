@@ -406,6 +406,15 @@ bool GuiMenu::input(InputConfig* config, Input input)
 	return false;
 }
 
+
+HelpStyle GuiMenu::getHelpStyle()
+{
+	HelpStyle style = HelpStyle();
+	// TODO : Find a better way to get theme
+	style.applyTheme(ViewController::get()->getState().getSystem()->getTheme(), "system");
+	return style;
+}
+
 std::vector<HelpPrompt> GuiMenu::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;

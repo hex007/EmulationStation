@@ -45,7 +45,7 @@ public:
     void setSize(const Eigen::Vector2f& size);
     void setSize(float w, float h);
     virtual void onSizeChanged() {};
-	
+
     float getZIndex() const;
     void setZIndex(float zIndex);
 
@@ -84,7 +84,7 @@ public:
 
 	virtual void onFocusGained() {};
 	virtual void onFocusLost() {};
-	
+
 	virtual void onShow();
 	virtual void onHide();
 
@@ -97,7 +97,7 @@ public:
 
 	// Called whenever help prompts change.
 	void updateHelpPrompts();
-	
+
 	virtual HelpStyle getHelpStyle();
 
 	// Returns true if the component is busy doing background processing (e.g. HTTP downloads)
