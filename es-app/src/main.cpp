@@ -303,7 +303,7 @@ int main(int argc, char* argv[])
 	while(running)
 	{
 		SDL_Event event;
-		if(ViewController::get()->getVideoEnabled() || ++smog < 100 ? SDL_PollEvent(&event) : SDL_WaitEvent(&event))
+		if(!ViewController::get()->getPowerSaver() || ++smog < 100 ? SDL_PollEvent(&event) : SDL_WaitEvent(&event))
 		{
 			smog = 0;
 			do

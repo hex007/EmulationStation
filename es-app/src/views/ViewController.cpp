@@ -26,7 +26,7 @@ void ViewController::init(Window* window)
 {
 	assert(!sInstance);
 	sInstance = new ViewController(window);
-	sInstance->mVideoEnabled = false;
+	sInstance->mPowerSaver = true;
 }
 
 ViewController::ViewController(Window* window)
@@ -313,11 +313,10 @@ std::shared_ptr<IGameListView> ViewController::getGameListView(SystemData* syste
 	{
 		case VIDEO:
 			view = std::shared_ptr<IGameListView>(new VideoGameListView(mWindow, system->getRootFolder()));
-			setVideoEnabled(true);
+			setPowerSaver(false);
 			break;
 		case DETAILED:
 			view = std::shared_ptr<IGameListView>(new DetailedGameListView(mWindow, system->getRootFolder()));
-			setVideoEnabled(false);
 			break;
 		// case GRID placeholder for future implementation.
 		//		view = std::shared_ptr<IGameListView>(new GridGameListView(mWindow, system->getRootFolder()));
@@ -325,7 +324,6 @@ std::shared_ptr<IGameListView> ViewController::getGameListView(SystemData* syste
 		case BASIC:
 		default:
 			view = std::shared_ptr<IGameListView>(new BasicGameListView(mWindow, system->getRootFolder()));
-			setVideoEnabled(false);
 			break;
 	}
 
