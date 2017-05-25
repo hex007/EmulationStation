@@ -309,7 +309,6 @@ std::shared_ptr<IGameListView> ViewController::getGameListView(SystemData* syste
 	}
 
 	// Create the view
-	setPowerSaver(selectedViewType != VIDEO);
 	switch (selectedViewType)
 	{
 		case VIDEO:
