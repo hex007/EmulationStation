@@ -78,8 +78,8 @@ public:
 	std::shared_ptr<IGameListView> getGameListView(SystemData* system);
 	std::shared_ptr<SystemView> getSystemListView();
 
-	bool getVideoEnabled() { return mVideoEnabled; }
-	void setVideoEnabled(bool state) { mVideoEnabled = state; }
+	inline bool getPowerSaver() { return mPowerSaver; }
+	void setPowerSaver(bool state) { mPowerSaver = state; }
 
 private:
 	ViewController(Window* window);
@@ -95,7 +95,7 @@ private:
 	Eigen::Affine3f mCamera;
 	float mFadeOpacity;
 	bool mLockInput;
-	bool mVideoEnabled;
+	bool mPowerSaver;
 
 	State mState;
 };
