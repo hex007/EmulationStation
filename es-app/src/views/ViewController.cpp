@@ -72,6 +72,7 @@ void ViewController::goToSystemView(SystemData* system)
 
 	systemList->goToSystem(system, false);
 	mCurrentView = systemList;
+	setPowerSaver(true);
 
 	playViewTransition();
 }
@@ -117,6 +118,8 @@ void ViewController::goToGameList(SystemData* system)
 	{
 		mCurrentView->onShow();
 	}
+
+	setPowerSaver(strcmp(getGameListView(system)->getName(), "video") != 0);
 	playViewTransition();
 }
 
@@ -313,7 +316,6 @@ std::shared_ptr<IGameListView> ViewController::getGameListView(SystemData* syste
 	{
 		case VIDEO:
 			view = std::shared_ptr<IGameListView>(new VideoGameListView(mWindow, system->getRootFolder()));
-			setPowerSaver(false);
 			break;
 		case DETAILED:
 			view = std::shared_ptr<IGameListView>(new DetailedGameListView(mWindow, system->getRootFolder()));

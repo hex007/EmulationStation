@@ -357,7 +357,9 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 
 	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
 	mVersion.setColor(0x000000FF);
-	mVersion.setText("EMULATIONSTATION : Hex's Build");
+	// TODO Revert to oriinal version text
+	// mVersion.setText("EMULATIONSTATION : Hex's Build");
+	mVersion.setText(ViewController::get()->getPowerSaver() ? "Hex's Build : Power Saver" : "Hex's Build : Performance");
 	mVersion.setAlignment(ALIGN_CENTER);
 
 	addChild(&mMenu);

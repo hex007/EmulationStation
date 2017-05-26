@@ -305,7 +305,6 @@ int main(int argc, char* argv[])
 		SDL_Event event;
 		if(!ViewController::get()->getPowerSaver() || ++smog < 100 ? SDL_PollEvent(&event) : SDL_WaitEvent(&event))
 		{
-			smog = 0;
 			do
 			{
 				switch(event.type)
@@ -327,7 +326,12 @@ int main(int argc, char* argv[])
 						break;
 				}
 			} while (SDL_PollEvent(&event));
-			lastTime = SDL_GetTicks();
+
+			if (smog == 100) // smog is 100 only when SDL_WaitEvent is used
+			{
+				lastTime = SDL_GetTicks(); // Needed to show animation when exiting from wait
+			}
+			smog = 0; // reset timer to zero
 		}
 
 		if(window.isSleeping())
