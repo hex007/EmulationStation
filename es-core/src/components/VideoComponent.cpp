@@ -1,4 +1,5 @@
 #include "components/VideoComponent.h"
+#include "AudioPlayer.h"
 #include "Renderer.h"
 #include "ThemeData.h"
 #include "Util.h"
@@ -6,29 +7,29 @@
 #include <codecvt>
 #endif
 
-#define FADE_TIME_MS	200
+#define FADE_TIME_MS 200
 
-libvlc_instance_t*		VideoComponent::mVLC = NULL;
+libvlc_instance_t* VideoComponent::mVLC = NULL;
 
 // VLC prepares to render a video frame.
 static void *lock(void *data, void **p_pixels) {
-    struct VideoContext *c = (struct VideoContext *)data;
-    SDL_LockMutex(c->mutex);
-    SDL_LockSurface(c->surface);
+	struct VideoContext *c = (struct VideoContext *)data;
+	SDL_LockMutex(c->mutex);
+	SDL_LockSurface(c->surface);
 	*p_pixels = c->surface->pixels;
-    return NULL; // Picture identifier, not needed here.
+	return NULL; // Picture identifier, not needed here.
 }
 
 // VLC just rendered a video frame.
 static void unlock(void *data, void *id, void *const *p_pixels) {
-    struct VideoContext *c = (struct VideoContext *)data;
-    SDL_UnlockSurface(c->surface);
-    SDL_UnlockMutex(c->mutex);
+	struct VideoContext *c = (struct VideoContext *)data;
+	SDL_UnlockSurface(c->surface);
+	SDL_UnlockMutex(c->mutex);
 }
 
 // VLC wants to display a video frame.
 static void display(void *data, void *id) {
-    //Data to be displayed
+	//Data to be displayed
 }
 
 VideoComponent::VideoComponent(Window* window) :
@@ -189,7 +190,7 @@ void VideoComponent::setImage(std::string path)
 	// Check that the image has changed
 	if (path == mStaticImagePath)
 		return;
-	
+
 	mStaticImage.setImage(path);
 	mFadeIn = 0.0f;
 	mStaticImagePath = path;
@@ -215,7 +216,7 @@ void VideoComponent::render(const Eigen::Affine3f& parentTrans)
 	GuiComponent::renderChildren(trans);
 
 	Renderer::setMatrix(trans);
-	
+
 	// Handle the case where the video is delayed
 	handleStartDelay();
 
@@ -532,10 +533,10 @@ void VideoComponent::update(int deltaTime)
 	if (mStartDelayed)
 	{
 		Uint32 ticks = SDL_GetTicks();
-		if (mStartTime > ticks) 
+		if (mStartTime > ticks)
 		{
 			Uint32 diff = mStartTime - ticks;
-			if (diff < FADE_TIME_MS) 
+			if (diff < FADE_TIME_MS)
 			{
 				mFadeIn = (float)diff / (float)FADE_TIME_MS;
 				return;
@@ -572,6 +573,10 @@ void VideoComponent::manageState()
 				// Path changed. Stop the video. We will start it again below because
 				// mIsPlaying will be modified by stopVideo to be false
 				stopVideo();
+				if (mVideoPath.empty())
+				{
+					AudioPlayer::conti();
+				}
 			}
 		}
 	}
@@ -581,6 +586,7 @@ void VideoComponent::manageState()
 		// If we are on display then see if we should start the video
 		if (show && !mVideoPath.empty())
 		{
+			AudioPlayer::pause();
 			startVideoWithDelay();
 		}
 	}
@@ -597,5 +603,3 @@ void VideoComponent::onHide()
 	mShowing = false;
 	manageState();
 }
-
-

@@ -145,7 +145,7 @@ def api_status(request):
 
 def api_clear(request):
     """Handle API request to clear playlist"""
-    request.send_response(200, 'API' "Clearing playlist")
+    request.send_response(200, 'API', "Clearing playlist")
     request.send_header('Content-Type', 'application/json')
     request.end_headers()
 
