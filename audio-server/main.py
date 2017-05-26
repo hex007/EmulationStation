@@ -11,7 +11,6 @@ from SocketServer import ThreadingMixIn
 
 import api
 import player
-import web
 
 __author__ = 'saket'
 __tag__ = 'main'
