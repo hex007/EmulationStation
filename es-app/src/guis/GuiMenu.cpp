@@ -32,6 +32,7 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 
 	// [version]
 
+
 	addEntry("MUSIC PLAYER", 0x777777FF, true,
 		[this] {
 			auto s = new GuiSettings(mWindow, "MUSIC PLAYER");
@@ -408,7 +409,6 @@ bool GuiMenu::input(InputConfig* config, Input input)
 
 	return false;
 }
-
 
 HelpStyle GuiMenu::getHelpStyle()
 {

@@ -45,8 +45,16 @@ bool GuiSettings::input(InputConfig* config, Input input)
 			delete window->peekGui();
 		return true;
 	}
-	
+
 	return GuiComponent::input(config, input);
+}
+
+HelpStyle GuiSettings::getHelpStyle()
+{
+	HelpStyle style = HelpStyle();
+	// TODO : Find a better way to get theme
+	style.applyTheme(ViewController::get()->getState().getSystem()->getTheme(), "system");
+	return style;
 }
 
 std::vector<HelpPrompt> GuiSettings::getHelpPrompts()
