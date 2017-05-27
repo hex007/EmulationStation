@@ -261,7 +261,7 @@ void SystemView::onCursorChanged(const CursorState& state)
 		mSystemInfo.setOpacity((unsigned char)(lerp<float>(infoStartOpacity, 0.f, t) * 255));
 	}, (int)(infoStartOpacity * 150));
 
-	unsigned int gameCount = getSelected()->getGameCount();
+	unsigned int gameCount = getSelected()->getDisplayedGameCount();
 
 	// also change the text after we've fully faded out
 	setAnimation(infoFadeOut, 0, [this, gameCount] {
