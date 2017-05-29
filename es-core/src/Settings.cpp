@@ -81,6 +81,8 @@ void Settings::setDefaults()
 	// we don't get a warning if we encounter it on a different platform
 	mBoolMap["VideoOmxPlayer"] = false;
 	mBoolMap["VideoAudio"] = true;
+	
+	mStringMap["OmxAudioDev"] = "local";
 
 }
 

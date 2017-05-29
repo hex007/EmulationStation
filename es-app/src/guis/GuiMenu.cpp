@@ -294,6 +294,9 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			devices.push_back("local");
 			devices.push_back("hdmi");
 			devices.push_back("both");
+			// USB audio
+			devices.push_back("alsa:hw:0,0");
+			devices.push_back("alsa:hw:1,0");
 			for (auto it = devices.begin(); it != devices.end(); it++)
 				omx_audio_dev->add(*it, *it, Settings::getInstance()->getString("OmxAudioDev") == *it);
 			s->addWithLabel("OMX PLAYER AUDIO DEVICE", omx_audio_dev);
