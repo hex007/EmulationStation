@@ -84,7 +84,7 @@ void VideoPlayerComponent::startVideo()
 				// We need to specify the layer of 10000 or above to ensure the video is displayed on top
 				// of our SDL display
 
-				const char* argv[] = { "", "--layer", "10010", "--loop", "--no-osd", "--aspect-mode", "letterbox", "--vol", "0", "--win", buf, "-b", "", "", "", "", NULL };
+				const char* argv[] = { "", "--layer", "10010", "--loop", "--no-osd", "--aspect-mode", "letterbox", "--vol", "0", "-o", "", "--win", buf, "-b", "", "", "", "", NULL };
 
 				// check if we want to mute the audio
 				if (!Settings::getInstance()->getBool("VideoAudio"))
@@ -98,7 +98,13 @@ void VideoPlayerComponent::startVideo()
 					argv[6] = "stretch";
 				}
 
-				argv[11] = mPlayingVideoPath.c_str();
+				// allow switch between audio output devices : local/hdmi/both
+				if (!Settings::getInstance()->getString("OmxAudioDev").empty())
+				{
+					argv[10] = Settings::getInstance()->getString("OmxAudioDev").c_str();
+				}
+				
+				argv[13] = mPlayingVideoPath.c_str();
 
 				const char* env[] = { "LD_LIBRARY_PATH=/opt/vc/libs:/usr/lib/omxplayer", NULL };
 

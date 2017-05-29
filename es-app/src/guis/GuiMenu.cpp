@@ -287,6 +287,20 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 				if(needReload)
 					ViewController::get()->reloadAll();
 			});
+			
+			// OMX player Audio Device
+			auto omx_audio_dev = std::make_shared< OptionListComponent<std::string> >(mWindow, "OMX PLAYER AUDIO DEVICE", false);
+			std::vector<std::string> devices;
+			devices.push_back("local");
+			devices.push_back("hdmi");
+			devices.push_back("both");
+			for (auto it = devices.begin(); it != devices.end(); it++)
+				omx_audio_dev->add(*it, *it, Settings::getInstance()->getString("OmxAudioDev") == *it);
+			s->addWithLabel("OMX PLAYER AUDIO DEVICE", omx_audio_dev);
+			s->addSaveFunc([omx_audio_dev] {
+				if (Settings::getInstance()->getString("OmxAudioDev") != omx_audio_dev->getSelected())
+					Settings::getInstance()->setString("OmxAudioDev", omx_audio_dev->getSelected());
+			});
 #endif
 			auto video_audio = std::make_shared<SwitchComponent>(mWindow);
 			video_audio->setState(Settings::getInstance()->getBool("VideoAudio"));
