@@ -16,7 +16,6 @@ public:
 	virtual std::vector<HelpPrompt> getHelpPrompts() override;
 	virtual HelpStyle getHelpStyle() override;
 
-
 private:
 	void openGamelistFilter();
 	void openMetaDataEd();

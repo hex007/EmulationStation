@@ -193,7 +193,6 @@ bool GuiGamelistOptions::input(InputConfig* config, Input input)
 HelpStyle GuiGamelistOptions::getHelpStyle()
 {
 	HelpStyle style = HelpStyle();
-	// TODO : Find a better way to get theme
 	style.applyTheme(mSystem->getTheme(), "system");
 	return style;
 }

@@ -52,7 +52,6 @@ bool GuiSettings::input(InputConfig* config, Input input)
 HelpStyle GuiSettings::getHelpStyle()
 {
 	HelpStyle style = HelpStyle();
-	// TODO : Find a better way to get theme
 	style.applyTheme(ViewController::get()->getState().getSystem()->getTheme(), "system");
 	return style;
 }

@@ -210,8 +210,8 @@ GuiMenu::GuiMenu(Window* window) : GuiComponent(window), mMenu(window, "MAIN MEN
 			std::vector<std::string> transitions;
 			transitions.push_back("fade");
 			transitions.push_back("slide");
+			transitions.push_back("simple slide");
 			transitions.push_back("instant");
-			transitions.push_back("none");
 			for(auto it = transitions.begin(); it != transitions.end(); it++)
 				transition_style->add(*it, *it, Settings::getInstance()->getString("TransitionStyle") == *it);
 			s->addWithLabel("TRANSITION STYLE", transition_style);
@@ -460,7 +460,6 @@ bool GuiMenu::input(InputConfig* config, Input input)
 HelpStyle GuiMenu::getHelpStyle()
 {
 	HelpStyle style = HelpStyle();
-	// TODO : Find a better way to get theme
 	style.applyTheme(ViewController::get()->getState().getSystem()->getTheme(), "system");
 	return style;
 }
