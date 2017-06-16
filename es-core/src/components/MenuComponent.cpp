@@ -63,7 +63,7 @@ void MenuComponent::updateSize()
 		}
 	}
 
-	setSize(Renderer::getScreenWidth() * 0.5f, height);
+	setSize(Renderer::getScreenWidth() * 0.7f, height);
 }
 
 void MenuComponent::onSizeChanged()
