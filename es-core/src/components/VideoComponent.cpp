@@ -9,6 +9,45 @@
 
 #define FADE_TIME_MS	200
 
+std::string getTitlePath() {
+	std::string titleFolder = getTitleFolder();
+	return titleFolder + "last_title.srt";
+}
+
+std::string getTitleFolder() {
+	std::string home = getHomePath();
+	return home + "/.emulationstation/tmp/";
+}
+
+void writeSubtitle(const char* gameName, const char* systemName, bool always)
+{
+	FILE* file = fopen(getTitlePath().c_str(), "w");
+	if (always) {
+		fprintf(file, "1\n00:00:01,000 --> 00:00:30,000\n");
+	}
+	else
+	{
+		fprintf(file, "1\n00:00:01,000 --> 00:00:08,000\n");
+	}
+	fprintf(file, "%s\n", gameName);
+	fprintf(file, "<i>%s</i>\n\n", systemName);
+
+	if (!always) {
+		fprintf(file, "2\n00:00:26,000 --> 00:00:30,000\n");
+		fprintf(file, "%s\n", gameName);
+		fprintf(file, "<i>%s</i>\n", systemName);
+	}
+
+	fflush(file);
+	fclose(file);
+	file = NULL;
+}
+
+void VideoComponent::setScreensaverMode(bool isScreensaver)
+{
+	mScreensaverMode = isScreensaver;
+}
+
 VideoComponent::VideoComponent(Window* window) :
 	GuiComponent(window),
 	mStaticImage(window),
@@ -19,6 +58,7 @@ VideoComponent::VideoComponent(Window* window) :
 	mShowing(false),
 	mScreensaverActive(false),
 	mDisable(false),
+	mScreensaverMode(false),
 	mTargetIsMax(false),
 	mOrigin(0, 0),
 	mTargetSize(0, 0)
@@ -31,12 +71,17 @@ VideoComponent::VideoComponent(Window* window) :
 		topWindow(false);
 	}
 
+	std::string path = getTitleFolder();
+	if(!boost::filesystem::exists(path))
+		boost::filesystem::create_directory(path);
 }
 
 VideoComponent::~VideoComponent()
 {
 	// Stop any currently running video
 	stopVideo();
+	// Delete subtitle file, if existing
+	remove(getTitlePath().c_str());
 }
 
 void VideoComponent::setOrigin(float originX, float originY)
@@ -119,19 +164,18 @@ void VideoComponent::render(const Eigen::Affine3f& parentTrans)
 
 	// Handle looping of the video
 	handleLooping();
+}
 
-	if (!mIsPlaying)
+void VideoComponent::renderSnapshot(const Eigen::Affine3f& parentTrans)
+{
+	// This is the case where the video is not currently being displayed. Work out
+	// if we need to display a static image
+	if ((mConfig.showSnapshotNoVideo && mVideoPath.empty()) || (mStartDelayed && mConfig.showSnapshotDelay))
 	{
-		// This is the case where the video is not currently being displayed. Work out
-		// if we need to display a static image
-		if ((mConfig.showSnapshotNoVideo && mVideoPath.empty()) || (mStartDelayed && mConfig.showSnapshotDelay))
-		{
-			// Display the static image instead
-			mStaticImage.setOpacity((unsigned char)(mFadeIn * 255.0f));
-			mStaticImage.render(parentTrans);
-		}
+		// Display the static image instead
+		mStaticImage.setOpacity((unsigned char)(mFadeIn * 255.0f));
+		mStaticImage.render(parentTrans);
 	}
-
 }
 
 void VideoComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)

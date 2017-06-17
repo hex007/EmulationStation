@@ -12,6 +12,10 @@
 #include <SDL_mutex.h>
 #include <boost/filesystem.hpp>
 
+std::string	getTitlePath();
+std::string	getTitleFolder();
+void writeSubtitle(const char* gameName, const char* systemName, bool always);
+
 class VideoComponent : public GuiComponent
 {
 	// Structure that groups together the configuration of the video component
@@ -35,6 +39,9 @@ public:
 	// Configures the component to show the default video
 	void setDefaultVideo();
 
+	// sets whether it's going to render in screensaver mode
+	void setScreensaverMode(bool isScreensaver);
+
 	virtual void onShow() override;
 	virtual void onHide() override;
 	virtual void onScreenSaverActivate() override;
@@ -49,6 +56,7 @@ public:
 	void setOpacity(unsigned char opacity) override;
 
 	void render(const Eigen::Affine3f& parentTrans) override;
+	void renderSnapshot(const Eigen::Affine3f& parentTrans);
 
 	virtual void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
@@ -107,6 +115,7 @@ protected:
 	bool							mShowing;
 	bool							mDisable;
 	bool							mScreensaverActive;
+	bool							mScreensaverMode;
 	bool							mTargetIsMax;
 
 	Configuration					mConfig;
